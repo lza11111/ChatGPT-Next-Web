@@ -57,6 +57,9 @@ export interface ChatConfig {
 
   disablePromptHint: boolean;
 
+  endpointType: string;
+  endpoint: string;
+  path: string;
   modelConfig: {
     model: string;
     temperature: number;
@@ -97,6 +100,17 @@ export const ALL_MODELS = [
     available: true,
   },
 ];
+
+export const ENDPOINT_TYPE = [
+  {
+    name: "OpenAI",
+    value: "OpenAI"
+  },
+  {
+    name: "Azure OpenAI",
+    value: "Azure"
+  }
+]
 
 export function limitNumber(
   x: number,
@@ -145,7 +159,9 @@ const DEFAULT_CONFIG: ChatConfig = {
   sidebarWidth: 300,
 
   disablePromptHint: false,
-
+  endpointType: "OpenAI",
+  endpoint: "https://api.openai.com",
+  path: "/v1/chat/completions",
   modelConfig: {
     model: "gpt-3.5-turbo",
     temperature: 1,
@@ -439,7 +455,7 @@ export const useChatStore = create<ChatStore>()(
             );
           },
           filterBot: !get().config.sendBotMessages,
-          modelConfig: get().config.modelConfig,
+          config: get().config,
         });
       },
 

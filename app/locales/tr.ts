@@ -114,6 +114,15 @@ const tr: LocaleType = {
       SubTitle:
         "Sıkıştırılmamış mesajların uzunluğu bu değeri aşarsa sıkıştırılır",
     },
+    EndpointType: {
+      Title: "Endpoint Type",
+    },
+    Endpoint: {
+      Title: "Endpoint",
+    },
+    Path: {
+      Title: "Path",
+    },
     Token: {
       Title: "API Anahtarı",
       SubTitle: "Erişim kodu sınırını yoksaymak için anahtarınızı kullanın",

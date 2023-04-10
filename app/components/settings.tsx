@@ -22,6 +22,7 @@ import {
   useUpdateStore,
   useAccessStore,
   ModalConfigValidator,
+  ENDPOINT_TYPE,
 } from "../store";
 import { Avatar } from "./chat";
 
@@ -229,8 +230,8 @@ export function Settings(props: { closeSettings: () => void }) {
               checkingUpdate
                 ? Locale.Settings.Update.IsChecking
                 : hasNewVersion
-                ? Locale.Settings.Update.FoundUpdate(remoteId ?? "ERROR")
-                : Locale.Settings.Update.IsLatest
+                  ? Locale.Settings.Update.FoundUpdate(remoteId ?? "ERROR")
+                  : Locale.Settings.Update.IsLatest
             }
           >
             {checkingUpdate ? (
@@ -364,7 +365,57 @@ export function Settings(props: { closeSettings: () => void }) {
           ) : (
             <></>
           )}
-
+          <SettingItem
+            title={Locale.Settings.EndpointType.Title}
+          >
+            <select
+              value={config.endpointType}
+              onChange={(e) => {
+                updateConfig(
+                  (config) =>
+                    (config.endpointType = e.currentTarget.value),
+                );
+              }}
+            >
+              {ENDPOINT_TYPE.map((v) => (
+                <option value={v.value} key={v.value}>
+                  {v.name}
+                </option>
+              ))}
+            </select>
+          </SettingItem>
+          {
+            config.endpointType === "Azure" ? (
+              <>
+                <SettingItem
+                  title={Locale.Settings.Endpoint.Title}
+                >
+                  <input
+                    value={config.endpoint}
+                    onChange={(e) =>
+                      updateConfig(
+                        (config) =>
+                          (config.endpoint = e.currentTarget.value),
+                      )
+                    }
+                  ></input>
+                </SettingItem>
+                <SettingItem
+                  title={Locale.Settings.Path.Title}
+                >
+                  <input
+                    value={config.path}
+                    onChange={(e) =>
+                      updateConfig(
+                        (config) =>
+                          (config.path = e.currentTarget.value),
+                      )
+                    }
+                  ></input>
+                </SettingItem>
+              </>
+            ) : <></>
+          }
           <SettingItem
             title={Locale.Settings.Token.Title}
             subTitle={Locale.Settings.Token.SubTitle}
@@ -386,9 +437,9 @@ export function Settings(props: { closeSettings: () => void }) {
                 ? loadingUsage
                   ? Locale.Settings.Usage.IsChecking
                   : Locale.Settings.Usage.SubTitle(
-                      usage?.used ?? "[?]",
-                      usage?.subscription ?? "[?]",
-                    )
+                    usage?.used ?? "[?]",
+                    usage?.subscription ?? "[?]",
+                  )
                 : Locale.Settings.Usage.NoAccess
             }
           >
@@ -434,8 +485,8 @@ export function Settings(props: { closeSettings: () => void }) {
               onChange={(e) =>
                 updateConfig(
                   (config) =>
-                    (config.compressMessageLengthThreshold =
-                      e.currentTarget.valueAsNumber),
+                  (config.compressMessageLengthThreshold =
+                    e.currentTarget.valueAsNumber),
                 )
               }
             ></input>
@@ -481,9 +532,9 @@ export function Settings(props: { closeSettings: () => void }) {
               onChange={(e) => {
                 updateConfig(
                   (config) =>
-                    (config.modelConfig.model = ModalConfigValidator.model(
-                      e.currentTarget.value,
-                    )),
+                  (config.modelConfig.model = ModalConfigValidator.model(
+                    e.currentTarget.value,
+                  )),
                 );
               }}
             >
@@ -506,10 +557,10 @@ export function Settings(props: { closeSettings: () => void }) {
               onChange={(e) => {
                 updateConfig(
                   (config) =>
-                    (config.modelConfig.temperature =
-                      ModalConfigValidator.temperature(
-                        e.currentTarget.valueAsNumber,
-                      )),
+                  (config.modelConfig.temperature =
+                    ModalConfigValidator.temperature(
+                      e.currentTarget.valueAsNumber,
+                    )),
                 );
               }}
             ></InputRange>
@@ -526,10 +577,10 @@ export function Settings(props: { closeSettings: () => void }) {
               onChange={(e) =>
                 updateConfig(
                   (config) =>
-                    (config.modelConfig.max_tokens =
-                      ModalConfigValidator.max_tokens(
-                        e.currentTarget.valueAsNumber,
-                      )),
+                  (config.modelConfig.max_tokens =
+                    ModalConfigValidator.max_tokens(
+                      e.currentTarget.valueAsNumber,
+                    )),
                 )
               }
             ></input>
@@ -546,10 +597,10 @@ export function Settings(props: { closeSettings: () => void }) {
               onChange={(e) => {
                 updateConfig(
                   (config) =>
-                    (config.modelConfig.presence_penalty =
-                      ModalConfigValidator.presence_penalty(
-                        e.currentTarget.valueAsNumber,
-                      )),
+                  (config.modelConfig.presence_penalty =
+                    ModalConfigValidator.presence_penalty(
+                      e.currentTarget.valueAsNumber,
+                    )),
                 );
               }}
             ></InputRange>

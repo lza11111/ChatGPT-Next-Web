@@ -114,6 +114,15 @@ const it: LocaleType = {
       SubTitle:
         "Comprimerà se la lunghezza dei messaggi non compressi supera il valore",
     },
+    EndpointType: {
+      Title: "Endpoint Type",
+    },
+    Endpoint: {
+      Title: "Endpoint",
+    },
+    Path: {
+      Title: "Path",
+    },
     Token: {
       Title: "Chiave API",
       SubTitle:

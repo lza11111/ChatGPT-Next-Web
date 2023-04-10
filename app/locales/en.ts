@@ -114,6 +114,15 @@ const en: LocaleType = {
       SubTitle:
         "Will compress if uncompressed messages length exceeds the value",
     },
+    EndpointType: {
+      Title: "Endpoint Type",
+    },
+    Endpoint: {
+      Title: "Endpoint",
+    },
+    Path: {
+      Title: "Path",
+    },
     Token: {
       Title: "API Key",
       SubTitle: "Use your key to ignore access code limit",

@@ -1,5 +1,5 @@
 import type { ChatRequest, ChatReponse } from "./api/openai/typing";
-import { Message, ModelConfig, useAccessStore, useChatStore } from "./store";
+import { ChatConfig, Message, ModelConfig, useAccessStore, useChatStore } from "./store";
 import { showToast } from "./components/ui-lib";
 
 const TIME_OUT_MS = 30000;
@@ -35,6 +35,7 @@ const makeRequestParam = (
 
 function getHeaders() {
   const accessStore = useAccessStore.getState();
+  const config = useChatStore.getState().config;
   let headers: Record<string, string> = {};
 
   if (accessStore.enabledAccessControl()) {
@@ -44,6 +45,9 @@ function getHeaders() {
   if (accessStore.token && accessStore.token.length > 0) {
     headers["token"] = accessStore.token;
   }
+  headers["endpoint-type"] = config.endpointType;
+  headers["endpoint"] = config.endpoint;
+  headers["path"] = config.path ?? "v1/chat/completions";
 
   return headers;
 }
@@ -64,7 +68,7 @@ export function requestOpenaiClient(path: string) {
 export async function requestChat(messages: Message[]) {
   const req: ChatRequest = makeRequestParam(messages, { filterBot: true });
 
-  const res = await requestOpenaiClient("v1/chat/completions")(req);
+  const res = await requestOpenaiClient(useChatStore.getState().config.path ?? "v1/chat/completions")(req);
 
   try {
     const response = (await res.json()) as ChatReponse;
@@ -124,7 +128,7 @@ export async function requestChatStream(
   messages: Message[],
   options?: {
     filterBot?: boolean;
-    modelConfig?: ModelConfig;
+    config?: ChatConfig;
     onMessage: (message: string, done: boolean) => void;
     onError: (error: Error, statusCode?: number) => void;
     onController?: (controller: AbortController) => void;
@@ -145,7 +149,7 @@ export async function requestChatStream(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        path: "v1/chat/completions",
+        path: options?.config?.path ?? "v1/chat/completions",
         ...getHeaders(),
       },
       body: JSON.stringify(req),

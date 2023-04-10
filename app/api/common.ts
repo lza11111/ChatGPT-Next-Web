@@ -7,15 +7,27 @@ const BASE_URL = process.env.BASE_URL ?? OPENAI_URL;
 
 export async function requestOpenai(req: NextRequest) {
   const apiKey = req.headers.get("token");
+  const endpointType = req.headers.get("endpoint-type");
+  const endpoint = req.headers.get("endpoint");
   const openaiPath = req.headers.get("path");
 
-  console.log("[Proxy] ", openaiPath);
+  const request_url = `${PROTOCOL}://${endpoint}${openaiPath}`;
 
-  return fetch(`${PROTOCOL}://${BASE_URL}/${openaiPath}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  if (endpointType === 'OpenAI') {
+    headers.Authorization = `Bearer ${apiKey}`;
+  }
+  if (endpointType === 'Azure') {
+    headers["api-key"] = apiKey ?? "";
+  }
+
+  console.log("[Proxy] ", request_url);
+
+  return fetch(request_url, {
+    headers,
     method: req.method,
     body: req.body,
   });
