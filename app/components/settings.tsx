@@ -32,7 +32,7 @@ import { getCurrentVersion, getEmojiUrl } from "../utils";
 import Link from "next/link";
 import { UPDATE_URL } from "../constant";
 import { SearchService, usePromptStore } from "../store/prompt";
-import { requestUsage } from "../requests";
+import { requestUsage, requestPrivateUsage } from "../requests";
 import { ErrorBoundary } from "./error";
 import { InputRange } from "./input-range";
 
@@ -107,7 +107,16 @@ export function Settings(props: { closeSettings: () => void }) {
   }>();
   const [loadingUsage, setLoadingUsage] = useState(false);
   function checkUsage() {
+    if (!accessStore.token) return;
     setLoadingUsage(true);
+    if (config.endpointType === EndpointType.Private) {
+      requestPrivateUsage()
+        .then((res) => setUsage(res))
+        .finally(() => {
+          setLoadingUsage(false);
+        });
+      return;
+    }
     requestUsage()
       .then((res) => setUsage(res))
       .finally(() => {

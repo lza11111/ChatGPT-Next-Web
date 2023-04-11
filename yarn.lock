@@ -1099,6 +1099,11 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
+"@nem035/gpt-3-encoder@^1.1.7":
+  version "1.1.7"
+  resolved "https://registry.npmmirror.com/@nem035/gpt-3-encoder/-/gpt-3-encoder-1.1.7.tgz#34f27863c22230fbfbcf1c8413d849c6f51cc2bb"
+  integrity sha512-dtOenP4ZAmsKXkobTDUCcbkQvPJbuJ6Kp/LHqWDYLK//XNgGs3Re8ymcQzyVhtph8JckdI3K8FR5Q+6mX7HnpQ==
+
 "@next/env@13.2.4":
   version "13.2.4"
   resolved "https://registry.yarnpkg.com/@next/env/-/env-13.2.4.tgz#8b763700262b2445140a44a8c8d088cef676dbae"

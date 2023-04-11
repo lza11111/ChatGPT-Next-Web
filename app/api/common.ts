@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
 import { EndpointType } from "../store";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import { DbClient } from "./dbclient";
 
 const DEFAULT_PROTOCOL = "https";
 const PROTOCOL = process.env.PROTOCOL ?? DEFAULT_PROTOCOL;
@@ -17,18 +16,13 @@ export async function requestOpenai(req: NextRequest) {
     "Content-Type": "application/json",
   };
   if (endpointType === EndpointType.Private) {
-    await prisma.$connect();
-    const res = await prisma.balance.findFirst({
-      where: {
-        api_key: apiKey!,
-        disabled: false,
-      },
-    });
+    const res = await DbClient.queryBalance(apiKey!);
     if (res) {
-      console.log(res);
-      const { endpoint, path, token } = res;
-      headers["api-key"] = token ?? "";
+      const { endpoint, path, api_key } = res;
+      headers["api-key"] = api_key ?? "";
       request_url = `${PROTOCOL}://${endpoint}${path}`;
+    } else {
+      throw new Error("Invalid token");
     }
   }
 

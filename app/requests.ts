@@ -71,6 +71,18 @@ export function requestOpenAIClient(path: string) {
     });
 }
 
+export function requestBackend(path: string) {
+  return (body: any, method = "POST") =>
+    fetch(path, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        token: useAccessStore.getState().token,
+      },
+      body: body && JSON.stringify(body),
+    });
+}
+
 export async function requestChat(messages: Message[]) {
   const req: ChatRequest = makeRequestParam(messages, { filterBot: true });
 
@@ -130,6 +142,14 @@ export async function requestUsage() {
     used: response.total_usage,
     subscription: total.hard_limit_usd,
   };
+}
+
+export async function requestPrivateUsage() {
+  const res = await (await requestBackend("/api/usage")(null, "GET")).json();
+  return {
+    used: res.used,
+    subscription: res.subscription,
+  }
 }
 
 export async function requestChatStream(

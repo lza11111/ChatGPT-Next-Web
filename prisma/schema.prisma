@@ -9,10 +9,12 @@ datasource db {
 
 model balance {
   id           String  @id @default(auto()) @map("_id") @db.ObjectId
-  api_key      String
+  account_key  String
+  account_name String
   disabled     Boolean
   endpoint     String
   path         String
-  remain_token Int
-  token        String
+  used         Int
+  subscription Int
+  api_key      String
 }

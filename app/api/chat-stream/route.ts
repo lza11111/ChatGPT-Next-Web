@@ -1,6 +1,8 @@
 import { createParser } from "eventsource-parser";
 import { NextRequest } from "next/server";
+import { encode } from "@nem035/gpt-3-encoder";
 import { requestOpenai } from "../common";
+import { DbClient } from "../dbclient";
 
 async function createStream(req: NextRequest) {
   const encoder = new TextEncoder();
@@ -44,7 +46,13 @@ async function createStream(req: NextRequest) {
 
       const parser = createParser(onParse);
       for await (const chunk of res.body as any) {
-        parser.feed(decoder.decode(chunk));
+        const str = decoder.decode(chunk);
+        try {
+          await DbClient.useBalance(req.headers.get("token")!, encode(str).length);
+        } catch(e) {
+          console.error("[Chat Stream] ", e);
+        }
+        parser.feed(str);
       }
     },
   });
@@ -63,6 +71,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export const config = {
-  runtime: "edge",
-};
+// export const config = {
+//   runtime: "edge",
+// };
