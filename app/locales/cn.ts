@@ -93,6 +93,9 @@ const cn = {
     Theme: "主题",
     TightBorder: "无边框模式",
     SendPreviewBubble: "发送预览气泡",
+    Summarize: {
+      Title: "禁用聊天记录摘要",
+    },
     Prompt: {
       Disable: {
         Title: "禁用提示词自动补全",

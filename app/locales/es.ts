@@ -95,6 +95,9 @@ const es: LocaleType = {
     Theme: "Tema",
     TightBorder: "Borde ajustado",
     SendPreviewBubble: "Enviar burbuja de vista previa",
+    Summarize: {
+      Title: "Disable Summarization",
+    },
     Prompt: {
       Disable: {
         Title: "Desactivar autocompletado",

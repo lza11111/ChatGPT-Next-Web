@@ -43,6 +43,12 @@ export enum Theme {
   Light = "light",
 }
 
+export enum EndpointType {
+  OpenAI = "openai",
+  AzureOpenAI = "azure-openai",
+  Private = "private",
+}
+
 export interface ChatConfig {
   historyMessageCount: number; // -1 means all
   compressMessageLengthThreshold: number;
@@ -56,8 +62,9 @@ export interface ChatConfig {
   sidebarWidth: number;
 
   disablePromptHint: boolean;
+  disableSummarizeTopic: boolean;
 
-  endpointType: string;
+  endpointType: EndpointType;
   endpoint: string;
   path: string;
   modelConfig: {
@@ -104,13 +111,17 @@ export const ALL_MODELS = [
 export const ENDPOINT_TYPE = [
   {
     name: "OpenAI",
-    value: "OpenAI"
+    value: EndpointType.OpenAI,
   },
   {
     name: "Azure OpenAI",
-    value: "Azure"
-  }
-]
+    value: EndpointType.AzureOpenAI,
+  },
+  {
+    name: "Private",
+    value: EndpointType.Private,
+  },
+];
 
 export function limitNumber(
   x: number,
@@ -159,8 +170,10 @@ const DEFAULT_CONFIG: ChatConfig = {
   sidebarWidth: 300,
 
   disablePromptHint: false,
-  endpointType: "OpenAI",
-  endpoint: "https://api.openai.com",
+  disableSummarizeTopic: true,
+
+  endpointType: EndpointType.OpenAI,
+  endpoint: "api.openai.com",
   path: "/v1/chat/completions",
   modelConfig: {
     model: "gpt-3.5-turbo",
@@ -519,7 +532,8 @@ export const useChatStore = create<ChatStore>()(
         const SUMMARIZE_MIN_LEN = 50;
         if (
           session.topic === DEFAULT_TOPIC &&
-          countMessages(session.messages) >= SUMMARIZE_MIN_LEN
+          countMessages(session.messages) >= SUMMARIZE_MIN_LEN &&
+          get().config.disableSummarizeTopic
         ) {
           requestWithPrompt(session.messages, Locale.Store.Prompt.Topic).then(
             (res) => {

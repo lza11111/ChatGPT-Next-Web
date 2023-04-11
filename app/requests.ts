@@ -1,5 +1,11 @@
 import type { ChatRequest, ChatReponse } from "./api/openai/typing";
-import { ChatConfig, Message, ModelConfig, useAccessStore, useChatStore } from "./store";
+import {
+  ChatConfig,
+  Message,
+  ModelConfig,
+  useAccessStore,
+  useChatStore,
+} from "./store";
 import { showToast } from "./components/ui-lib";
 
 const TIME_OUT_MS = 30000;
@@ -47,19 +53,19 @@ function getHeaders() {
   }
   headers["endpoint-type"] = config.endpointType;
   headers["endpoint"] = config.endpoint;
-  headers["path"] = config.path ?? "v1/chat/completions";
+  headers["path"] = config.path ?? "/v1/chat/completions";
 
   return headers;
 }
 
-export function requestOpenaiClient(path: string) {
+export function requestOpenAIClient(path: string) {
   return (body: any, method = "POST") =>
     fetch("/api/openai?_vercel_no_cache=1", {
       method,
       headers: {
         "Content-Type": "application/json",
-        path,
         ...getHeaders(),
+        path,
       },
       body: body && JSON.stringify(body),
     });
@@ -68,7 +74,9 @@ export function requestOpenaiClient(path: string) {
 export async function requestChat(messages: Message[]) {
   const req: ChatRequest = makeRequestParam(messages, { filterBot: true });
 
-  const res = await requestOpenaiClient(useChatStore.getState().config.path ?? "v1/chat/completions")(req);
+  const res = await requestOpenAIClient(
+    useChatStore.getState().config.path ?? "/v1/chat/completions",
+  )(req);
 
   try {
     const response = (await res.json()) as ChatReponse;
@@ -91,10 +99,10 @@ export async function requestUsage() {
   const endDate = formatDate(now);
 
   const [used, subs] = await Promise.all([
-    requestOpenaiClient(
-      `dashboard/billing/usage?start_date=${startDate}&end_date=${endDate}`,
+    requestOpenAIClient(
+      `/dashboard/billing/usage?start_date=${startDate}&end_date=${endDate}`,
     )(null, "GET"),
-    requestOpenaiClient("dashboard/billing/subscription")(null, "GET"),
+    requestOpenAIClient("/dashboard/billing/subscription")(null, "GET"),
   ]);
 
   const response = (await used.json()) as {
