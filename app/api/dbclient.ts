@@ -15,7 +15,7 @@ export class DbClient {
     });
   }
 
-  static async useBalance(apiKey: string, num: number) {
+  static async consumeToken(apiKey: string, num: number) {
     await this.init();
     const balance = await this.queryBalance(apiKey);
     if (!balance) {

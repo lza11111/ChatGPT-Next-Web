@@ -27,7 +27,7 @@ export async function requestOpenai(req: NextRequest) {
       request_url = `${PROTOCOL}://${endpoint}${path}`;
       if (body.messages) {
         body.messages.forEach((msg: { role: string, content: string }) => {
-          DbClient.useBalance(apiKey!, encode(msg.content).length);
+          DbClient.consumeToken(apiKey!, encode(msg.content).length);
         });
       }
     } else {

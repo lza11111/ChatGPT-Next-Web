@@ -37,7 +37,7 @@ async function createStream(req: NextRequest) {
             }
             const text = json.choices[0].delta.content;
             if (text) {
-              DbClient.useBalance(req.headers.get("token")!, encode(text).length);
+              DbClient.consumeToken(req.headers.get("token")!, encode(text).length);
             }
             const queue = encoder.encode(text);
             controller.enqueue(queue);
