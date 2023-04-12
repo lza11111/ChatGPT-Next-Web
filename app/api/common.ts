@@ -1,3 +1,4 @@
+import { encode } from "@nem035/gpt-3-encoder";
 import { NextRequest } from "next/server";
 import { EndpointType } from "../store";
 import { DbClient } from "./dbclient";
@@ -15,12 +16,20 @@ export async function requestOpenai(req: NextRequest) {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
+
+  const body = (await req.json());
+  
   if (endpointType === EndpointType.Private) {
     const res = await DbClient.queryBalance(apiKey!);
     if (res) {
       const { endpoint, path, api_key } = res;
       headers["api-key"] = api_key ?? "";
       request_url = `${PROTOCOL}://${endpoint}${path}`;
+      if (body.messages) {
+        body.messages.forEach((msg: { role: string, content: string }) => {
+          DbClient.useBalance(apiKey!, encode(msg.content).length);
+        });
+      }
     } else {
       throw new Error("Invalid token");
     }
@@ -43,6 +52,6 @@ export async function requestOpenai(req: NextRequest) {
   return fetch(request_url, {
     headers,
     method: req.method,
-    body: req.body,
+    body: JSON.stringify(body),
   });
 }

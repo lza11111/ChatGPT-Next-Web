@@ -36,6 +36,9 @@ async function createStream(req: NextRequest) {
               return;
             }
             const text = json.choices[0].delta.content;
+            if (text) {
+              DbClient.useBalance(req.headers.get("token")!, encode(text).length);
+            }
             const queue = encoder.encode(text);
             controller.enqueue(queue);
           } catch (e) {
@@ -47,11 +50,6 @@ async function createStream(req: NextRequest) {
       const parser = createParser(onParse);
       for await (const chunk of res.body as any) {
         const str = decoder.decode(chunk);
-        try {
-          await DbClient.useBalance(req.headers.get("token")!, encode(str).length);
-        } catch(e) {
-          console.error("[Chat Stream] ", e);
-        }
         parser.feed(str);
       }
     },
