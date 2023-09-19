@@ -31,13 +31,19 @@ async function createStream(req: NextRequest) {
           }
           try {
             const json = JSON.parse(data);
+            if (json.choices.length == 0) {
+              return;
+            }
             if (json.choices[0]["finish_reason"] === "stop") {
-              controller.close();
+              // controller.close();
               return;
             }
             const text = json.choices[0].delta.content;
             if (text) {
-              DbClient.consumeToken(req.headers.get("token")!, encode(text).length);
+              DbClient.consumeToken(
+                req.headers.get("token")!,
+                encode(text).length,
+              );
             }
             const queue = encoder.encode(text);
             controller.enqueue(queue);
